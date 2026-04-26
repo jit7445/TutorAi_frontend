@@ -1,26 +1,81 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: rgb(var(--background));
+  --color-foreground: rgb(var(--foreground));
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  
+  --color-brand-primary: #3b82f6;
+  --color-brand-secondary: #8b5cf6;
+  
+  @keyframes beam {
+    0% {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    50% {
+      opacity: 0.5;
+    }
+    100% {
+      transform: translateY(100vh);
+      opacity: 0;
+    }
+  }
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+:root {
+  --background: 255 255 255;
+  --foreground: 2 6 23;
 }
+
+.dark {
+  --background: 2 6 23;
+  --foreground: 248 250 252;
+}
+
+body {
+  background-color: rgb(var(--background));
+  color: rgb(var(--foreground));
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.hero-heading {
+  color: rgb(var(--foreground));
+}
+
+.glass-card {
+  background-color: rgb(var(--background));
+  border: 1px solid rgba(var(--foreground), 0.1);
+}
+
+.nav-container {
+  background-color: rgba(var(--background), 0.8);
+  border: 1px solid rgba(var(--foreground), 0.1);
+  backdrop-filter: blur(12px);
+}
+
+
+
+.animate-beam {
+  animation: beam linear infinite;
+}
+
+.animate-gradient {
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+
+

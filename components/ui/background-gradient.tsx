@@ -1,0 +1,36 @@
+"use client";
+import React from "react";
+import { cn } from "@/lib/utils";
+
+export const BackgroundGradient = ({
+  children,
+  className,
+  containerClassName,
+  animate = true,
+}: {
+  children?: React.ReactNode;
+  className?: string;
+  containerClassName?: string;
+  animate?: boolean;
+}) => {
+  return (
+    <div className={cn("relative p-[4px] group", containerClassName)}>
+      <div
+        className={cn(
+          "absolute inset-0 rounded-3xl z-[1] opacity-60 group-hover:opacity-100 blur-xl transition duration-500",
+          "bg-[radial-gradient(circle_farthest-side_at_0_100%,#00ccb1,transparent),radial-gradient(circle_farthest-side_at_100%_0,#7b61ff,transparent),radial-gradient(circle_farthest-side_at_100%_100%,#ffc414,transparent),radial-gradient(circle_farthest-side_at_0_0,#1ca0fb,#141316)] dark:opacity-60 opacity-20",
+          animate && "animate-gradient"
+        )}
+      />
+      <div
+        className={cn(
+          "absolute inset-0 rounded-3xl z-[1]",
+          "bg-[radial-gradient(circle_farthest-side_at_0_100%,#00ccb1,transparent),radial-gradient(circle_farthest-side_at_100%_0,#7b61ff,transparent),radial-gradient(circle_farthest-side_at_100%_100%,#ffc414,transparent),radial-gradient(circle_farthest-side_at_0_0,#1ca0fb,#141316)] dark:opacity-100 opacity-30",
+          animate && "animate-gradient"
+        )}
+      />
+
+      <div className={cn("relative z-10", className)}>{children}</div>
+    </div>
+  );
+};
