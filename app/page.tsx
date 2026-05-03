@@ -1,219 +1,322 @@
 "use client";
 import React, { useState, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Send, Sparkles, Video, FileText, PlayCircle, Download } from "lucide-react";
+import { motion, AnimatePresence, useScroll, useTransform, useSpring } from "framer-motion";
+import { Send, Sparkles, Video, FileText, PlayCircle, Download, Paperclip, X, Users, Zap, Globe, Star, Quote } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Navbar } from "@/components/ui/navbar";
-import { BackgroundBeams } from "@/components/ui/background-beams";
 import { BackgroundGradient } from "@/components/ui/background-gradient";
 import { HoverCard } from "@/components/ui/hover-card";
 import { AuthModal } from "@/components/ui/auth-modal";
-import { LampContainer } from "@/components/ui/lamp";
-import { CanvasText } from "@/components/ui/canvas-text";
-import { InteractiveGrid } from "@/components/ui/interactive-grid";
-import { useMousePosition } from "@/lib/hooks/use-mouse-position";
-import { useTheme } from "next-themes";
+import { MorphingBackground } from "@/components/ui/morphing-background";
+import { Library } from "@/components/ui/library";
+
+// --- Sub-components ---
+
+const FadeUp = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 40, scale: 0.95 }}
+    whileInView={{ opacity: 1, y: 0, scale: 1 }}
+    viewport={{ once: false, margin: "-100px" }}
+    transition={{ 
+      duration: 1.2, 
+      delay, 
+      ease: [0.22, 1, 0.36, 1] 
+    }}
+  >
+    {children}
+  </motion.div>
+);
+
+const ScrollZoomWrapper = ({ children }: { children: React.ReactNode }) => {
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+
+  const scale = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.8, 1, 1, 0.8]);
+  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+  const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
+
+  return (
+    <motion.div 
+      ref={containerRef} 
+      style={{ scale, opacity, y }}
+      className="will-change-transform"
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+const StatCounter = ({ value, label }: { value: string; label: string }) => {
+  return (
+    <div className="text-center p-8 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.5 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        className="text-5xl md:text-6xl font-display font-bold text-white mb-2"
+      >
+        {value}
+      </motion.div>
+      <div className="text-white/60 font-sans tracking-widest uppercase text-xs">{label}</div>
+    </div>
+  );
+};
 
 export default function Home() {
   const [topic, setTopic] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [showResults, setShowResults] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [attachedFile, setAttachedFile] = useState<File | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const resultsRef = useRef<HTMLDivElement>(null);
-  const mousePosition = useMousePosition();
-  const { theme } = useTheme();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleGenerate = () => {
-    if (!topic) return;
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) setAttachedFile(file);
+  };
+
+  const handleGenerate = async () => {
+    if (!topic && !attachedFile) {
+      setError("Please enter a topic or upload a file.");
+      return;
+    }
+
+    const token = localStorage.getItem("tutorai_token");
+    if (!token) {
+      setIsAuthModalOpen(true);
+      return;
+    }
+
     setIsGenerating(true);
-    // Simulate generation
-    setTimeout(() => {
+    setError("");
+    setSuccess(false);
+
+    try {
+      const response = await fetch("http://localhost:3005/api/v1/ai/jobs", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ topic: topic || attachedFile?.name })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) throw new Error(data.message || "Failed to start generation");
+
+      setSuccess(true);
+      setTopic("");
+      setAttachedFile(null);
+      // Wait a bit and then reload to show new items in Library
+      setTimeout(() => window.location.hash = "#library", 2000);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
       setIsGenerating(false);
-      setShowResults(true);
-      setTimeout(() => {
-        resultsRef.current?.scrollIntoView({ behavior: "smooth" });
-      }, 100);
-    }, 2000);
+    }
   };
 
   return (
-    <main className="min-h-screen bg-background text-foreground selection:bg-blue-500/30 overflow-x-hidden">
+    <MorphingBackground>
       <Navbar onLoginClick={() => setIsAuthModalOpen(true)} />
       
-      <AnimatePresence>
-        {isAuthModalOpen && (
-          <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
-        )}
-      </AnimatePresence>
+      {/* 1. Hero Section */}
+      <section className="min-h-screen flex flex-col items-center justify-center pt-40 md:pt-20 px-4 text-center relative overflow-hidden">
 
-      {/* Hero Section */}
-      <section className="relative h-[95vh] flex flex-col items-center justify-center px-4 overflow-hidden border-b border-black/5 dark:border-white/5">
-        <InteractiveGrid 
-          className="z-0" 
-          gridSize={50} 
-          glowColor={theme === "dark" ? "rgba(37, 99, 235, 0.2)" : "rgba(37, 99, 235, 0.1)"}
-        />
-        <BackgroundBeams className="opacity-[0.1] dark:opacity-30" />
-        
-        <div className="relative z-10 text-center space-y-8 max-w-4xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 text-sm font-medium animate-fade-in">
-            <Sparkles className="w-4 h-4" />
-            <span>AI-Powered Learning Platform</span>
+
+        <FadeUp>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-8">
+            <Sparkles className="w-4 h-4 text-blue-400" />
+            <span className="text-xs font-medium text-white/80 tracking-wider uppercase">AI-Powered Learning Revolution</span>
           </div>
-          
-          <h1 className="hero-heading text-6xl md:text-8xl font-bold tracking-tighter leading-tight">
-            Learn Anything <br /> with <span className="text-blue-600">TutorAI</span>
-          </h1>
-          
-          <p className="text-lg md:text-xl text-muted max-w-2xl mx-auto leading-relaxed">
-            Generate high-quality educational videos and detailed study notes in seconds. Just type a topic and let our AI handle the rest.
-          </p>
+        </FadeUp>
 
-          {/* Input Area */}
-          <div className="relative max-w-2xl mx-auto mt-12 group">
-            <BackgroundGradient containerClassName="rounded-3xl" className="rounded-2xl p-1 glass-card overflow-hidden shadow-xl shadow-blue-500/5">
-              <div className="relative flex items-center glass-card rounded-2xl p-1">
-                <input
-                  type="text"
-                  placeholder="Explain the world 2..."
-                  value={topic}
-                  onChange={(e) => setTopic(e.target.value)}
-                  className="flex-1 bg-transparent border-none focus:ring-0 px-6 py-4 text-lg outline-none placeholder:text-muted hero-heading"
-                />
-                <button
-                  onClick={handleGenerate}
-                  disabled={isGenerating || !topic}
-                  className={cn(
-                    "flex items-center gap-2 px-8 py-4 rounded-xl font-bold transition-all duration-200",
-                    topic 
-                      ? "bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_20px_rgba(37,99,235,0.3)]" 
-                      : "bg-slate-100 dark:bg-slate-800 text-muted cursor-not-allowed"
-                  )}
-                >
+        <FadeUp delay={0.1}>
+          <h1 className="font-display text-7xl md:text-9xl font-bold tracking-tighter leading-[0.9] text-white mb-8">
+            Study Smarter, <br /> 
+            <span className="italic font-normal opacity-80">Not Harder</span>
+          </h1>
+        </FadeUp>
+
+        <FadeUp delay={0.2}>
+          <p className="font-sans text-lg md:text-xl text-white/60 max-w-2xl mx-auto leading-relaxed mb-12">
+            Instant notes from PDFs or AI-driven web research. 
+            Cinema-quality videos for every topic. Save hours of study time every day.
+          </p>
+        </FadeUp>
+
+        <FadeUp delay={0.3}>
+          <div className="relative w-full max-w-4xl mx-auto group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+            <div className="relative bg-black/40 backdrop-blur-2xl border border-white/10 rounded-3xl p-2 flex items-center">
+              <input type="file" ref={fileInputRef} onChange={handleFileUpload} className="hidden" />
+              <button onClick={() => fileInputRef.current?.click()} className="p-6 text-white/40 hover:text-white transition-colors">
+                <Paperclip className="w-8 h-8" />
+              </button>
+              <div className="flex-1 flex items-center px-4">
+                {attachedFile ? (
+                  <div className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-blue-500/20 border border-blue-500/30 text-blue-400 text-lg">
+                    <FileText className="w-5 h-5" />
+                    <span className="truncate max-w-[250px] font-bold">{attachedFile.name}</span>
+                    <button onClick={() => setAttachedFile(null)} className="hover:text-white"><X className="w-5 h-5" /></button>
+                  </div>
+                ) : (
+                  <input 
+                    type="text" 
+                    placeholder="What do you want to master today?" 
+                    className="w-full bg-transparent border-none focus:ring-0 py-8 px-2 text-2xl md:text-3xl outline-none text-white font-display placeholder:text-white/20"
+                    value={topic}
+                    onChange={(e) => setTopic(e.target.value)}
+                  />
+                )}
+              </div>
+              <button 
+                onClick={handleGenerate}
+                disabled={isGenerating}
+                className="relative group/btn overflow-hidden bg-blue-600 px-8 py-4 rounded-full font-bold text-base md:text-lg text-white transition-all hover:scale-105 active:scale-95 disabled:opacity-50 shadow-[0_0_30px_rgba(37,99,235,0.4)] hover:shadow-[0_0_50px_rgba(37,99,235,0.6)]"
+              >
+                {/* Button Shine Animation */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:animate-[shimmer_1.5s_infinite]" />
+                
+                <div className="relative z-10 flex items-center gap-2">
                   {isGenerating ? (
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   ) : (
-                    <>
-                      <Send className="w-5 h-5" />
-                      <span>Generate</span>
-                    </>
+                    <Sparkles className="w-5 h-5" />
                   )}
-                </button>
-              </div>
-            </BackgroundGradient>
-          </div>
-        </div>
-
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce opacity-20">
-          <div className="w-1 h-12 rounded-full bg-gradient-to-b from-blue-500 to-transparent" />
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-32 px-4 max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-3 gap-8">
-          <HoverCard>
-            <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center mb-6 border border-blue-500/20">
-              <Video className="text-blue-600" />
+                  <span className="tracking-tight whitespace-nowrap">{isGenerating ? "Creating..." : "Generate Magic"}</span>
+                </div>
+              </button>
             </div>
-            <h3 className="text-2xl font-bold mb-4 hero-heading">Video Generation</h3>
-            <p className="opacity-70 leading-relaxed">
-              Cinema-quality educational videos with synthesized voiceovers and dynamic visuals tailored to your topic.
-            </p>
-          </HoverCard>
 
-          <HoverCard>
-            <div className="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center mb-6 border border-purple-500/20">
-              <FileText className="text-purple-600" />
-            </div>
-            <h3 className="text-2xl font-bold mb-4 hero-heading">Study Notes</h3>
-            <p className="opacity-70 leading-relaxed">
-              Comprehensive PDF and DOC notes including summaries, key concepts, and detailed explanations.
-            </p>
-          </HoverCard>
 
-          <HoverCard>
-            <div className="w-12 h-12 rounded-2xl bg-pink-500/10 flex items-center justify-center mb-6 border border-pink-500/20">
-              <Sparkles className="text-pink-600" />
-            </div>
-            <h3 className="text-2xl font-bold mb-4 hero-heading">AI Magic</h3>
-            <p className="opacity-70 leading-relaxed">
-              Powered by advanced LLMs and media synthesis models to ensure accuracy and engagement.
-            </p>
-          </HoverCard>
-        </div>
-      </section>
 
-      {/* Mock Result Section */}
-      <section ref={resultsRef} className="py-20 px-4 glass-card border-y scroll-mt-20 transition-all">
-        <div className="max-w-5xl mx-auto text-center space-y-12">
-          <h2 className="text-4xl font-bold hero-heading">Your Generated Content</h2>
-          <div className="grid md:grid-cols-2 gap-12">
-            {/* Video Preview */}
-            <div className="group relative rounded-3xl overflow-hidden border border-black/10 dark:border-white/10 bg-black aspect-video flex items-center justify-center shadow-2xl">
-               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10" />
-               <PlayCircle className="w-20 h-20 text-white/50 group-hover:text-blue-500 group-hover:scale-110 transition-all duration-300 z-20 cursor-pointer" />
-               <div className="absolute bottom-6 left-6 z-20 text-left">
-                  <p className="text-sm font-medium text-blue-400 mb-1">Generated Video</p>
-                  <h4 className="text-lg font-bold text-white">Topic Overview: {topic || "World History"}</h4>
-               </div>
-            </div>
             
-            {/* Notes Preview */}
-            <div className="flex flex-col gap-4">
-               {[1, 2].map((i) => (
-                 <div key={i} className="flex items-center justify-between p-6 rounded-2xl glass-card border hover:border-blue-500/30 transition-all shadow-sm">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                        <FileText className="w-5 h-5 opacity-50" />
-                      </div>
-                      <div className="text-left">
-                        <p className="font-bold hero-heading">Summary_Notes_Part_{i}.pdf</p>
-                        <p className="text-sm opacity-50">2.4 MB • PDF Document</p>
-                      </div>
-                    </div>
-                    <button className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors text-blue-600">
-                      <Download className="w-5 h-5" />
-                    </button>
-                 </div>
-               ))}
-            </div>
+            <AnimatePresence>
+              {error && (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="absolute top-full left-0 right-0 mt-4 text-red-400 text-sm font-bold">
+                  {error}
+                </motion.div>
+              )}
+              {success && (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="absolute top-full left-0 right-0 mt-4 text-emerald-400 text-sm font-bold">
+                  Success! Generation started. Check your library below.
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-        </div>
+        </FadeUp>
       </section>
 
-      {/* Lamp Section */}
-      <div className="mt-20">
-        <LampContainer>
-          <motion.h1
-            initial={{ opacity: 0.5, y: 100 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{
-              delay: 0.3,
-              duration: 0.8,
-              ease: "easeInOut",
-            }}
-            className="mt-8 bg-gradient-to-br from-slate-300 to-slate-500 py-4 bg-clip-text text-center text-4xl font-medium tracking-tight text-transparent md:text-7xl"
-          >
-            Ready to <br /> Start Learning?
-          </motion.h1>
-          <motion.button
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
-            className="mt-8 px-10 py-4 rounded-2xl bg-blue-600 text-white font-bold text-lg hover:bg-blue-500 transition-all shadow-xl shadow-blue-500/20"
-          >
-            Get Started Now
-          </motion.button>
-        </LampContainer>
-      </div>
+      {/* Library Section */}
+      <Library />
 
-      {/* Footer */}
-      <footer className="py-12 border-t text-center opacity-50">
-        <p>© 2026 TutorAI. All rights reserved.</p>
+
+      {/* 2. Features Section */}
+      <section className="py-40 px-4 max-w-7xl mx-auto">
+        <ScrollZoomWrapper>
+          <FadeUp>
+            <div className="text-center mb-24">
+              <h2 className="font-display text-5xl md:text-7xl font-bold text-white mb-6">Powerful Tools</h2>
+              <p className="text-white/50 text-lg max-w-2xl mx-auto font-sans">
+                Everything you need to master any subject in a fraction of the time.
+              </p>
+            </div>
+          </FadeUp>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { icon: Video, title: "Video Gen", desc: "Cinema-quality educational videos with AI voiceovers.", color: "from-blue-500/20 to-cyan-500/20" },
+              { icon: FileText, title: "PDF Extraction", desc: "Upload PDFs for instant structured study notes.", color: "from-purple-500/20 to-pink-500/20" },
+              { icon: Sparkles, title: "AI Research", desc: "Global web scraping to build perfect study guides.", color: "from-emerald-500/20 to-teal-500/20" },
+            ].map((f, i) => (
+              <FadeUp key={i} delay={i * 0.1}>
+                <HoverCard className="bg-white/5 backdrop-blur-2xl border-white/10 h-full p-10">
+                  <div className={cn("w-16 h-16 rounded-2xl bg-gradient-to-br flex items-center justify-center mb-8 border border-white/10", f.color)}>
+                    <f.icon className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="font-display text-3xl font-bold text-white mb-4">{f.title}</h3>
+                  <p className="text-white/50 leading-relaxed font-sans">{f.desc}</p>
+                </HoverCard>
+              </FadeUp>
+            ))}
+          </div>
+        </ScrollZoomWrapper>
+      </section>
+
+      {/* 3. Stats Section */}
+      <section className="py-40 px-4 max-w-7xl mx-auto">
+        <ScrollZoomWrapper>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <StatCounter value="500K+" label="Active Students" />
+            <StatCounter value="12M+" label="Notes Generated" />
+            <StatCounter value="98%" label="Satisfaction" />
+            <StatCounter value="4.9/5" label="App Store" />
+          </div>
+        </ScrollZoomWrapper>
+      </section>
+
+      {/* 4. Testimonials */}
+      <section className="py-40 relative overflow-hidden">
+        <ScrollZoomWrapper>
+          <FadeUp>
+            <div className="px-4 text-center mb-24">
+              <h2 className="font-display text-5xl md:text-7xl font-bold text-white mb-6">Student Stories</h2>
+            </div>
+          </FadeUp>
+          
+          <div className="flex gap-8 px-4 overflow-x-auto no-scrollbar pb-10 snap-x snap-mandatory">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="min-w-[350px] md:min-w-[450px] p-8 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 snap-center">
+                <Quote className="w-10 h-10 text-white/20 mb-6" />
+                <p className="text-xl text-white/80 font-sans italic leading-relaxed mb-8">
+                  "TutorAI literally saved my finals. I uploaded 500 pages of medical notes and got perfect summaries in minutes."
+                </p>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-500" />
+                  <div>
+                    <div className="text-white font-bold font-display">Sarah Jenkins</div>
+                    <div className="text-white/40 text-sm uppercase tracking-widest font-sans">Medical Student</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </ScrollZoomWrapper>
+      </section>
+
+
+
+
+      {/* 6. Footer */}
+      <footer className="py-20 px-4 border-t border-white/10">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center">
+              <Sparkles className="text-black w-6 h-6" />
+            </div>
+            <span className="font-display text-2xl font-bold text-white">TutorAI</span>
+          </div>
+          
+          <div className="flex gap-8 text-white/40 font-sans text-sm tracking-widest uppercase">
+            <a href="#" className="hover:text-white transition-colors">Privacy</a>
+            <a href="#" className="hover:text-white transition-colors">Terms</a>
+            <a href="#" className="hover:text-white transition-colors">Contact</a>
+          </div>
+
+          <div className="text-white/20 font-sans text-sm">
+            © 2026 TutorAI. Built for students, by students.
+          </div>
+        </div>
       </footer>
 
-    </main>
+      <AnimatePresence>
+        {isAuthModalOpen && <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />}
+      </AnimatePresence>
+    </MorphingBackground>
   );
 }

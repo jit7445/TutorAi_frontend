@@ -18,10 +18,17 @@ const GithubIcon = () => (
   </svg>
 );
 
+import { AuthForm } from "./auth-form";
+
 export const AuthModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const [isLogin, setIsLogin] = useState(true);
 
   if (!isOpen) return null;
+
+  const handleSuccess = () => {
+    onClose();
+    window.location.reload();
+  };
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -29,61 +36,38 @@ export const AuthModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
         className="absolute inset-0 bg-black/60 backdrop-blur-sm" 
         onClick={onClose}
       />
-      <div className="relative w-full max-w-md glass-card rounded-3xl p-8 shadow-2xl animate-in fade-in zoom-in duration-300">
+      <div className="relative w-full max-w-md glass-card rounded-3xl p-8 shadow-2xl animate-in fade-in zoom-in duration-300 overflow-hidden">
+        {/* Animated Background Glow */}
+        <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-500/10 blur-[80px] rounded-full" />
+        
         <button 
           onClick={onClose}
-          className="absolute top-6 right-6 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          className="absolute top-6 right-6 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors z-10"
         >
           <X className="w-5 h-5 opacity-50" />
         </button>
 
-        <div className="text-center space-y-2 mb-8">
-          <h2 className="text-3xl font-bold hero-heading">
+        <div className="text-center space-y-2 mb-8 relative z-10">
+          <h2 className="text-3xl font-display font-bold text-slate-900 dark:text-white">
             {isLogin ? "Welcome Back" : "Create Account"}
           </h2>
-          <p className="opacity-70">
+          <p className="opacity-70 font-sans">
             {isLogin ? "Enter your details to sign in" : "Sign up to start learning with AI"}
           </p>
         </div>
 
-        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-          <div className="space-y-2">
-            <label className="text-sm font-medium ml-1">Email Address</label>
-            <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 opacity-40" />
-              <input 
-                type="email" 
-                placeholder="name@example.com"
-                className="w-full bg-slate-50 dark:bg-slate-800/50 border border-black/5 dark:border-white/5 rounded-2xl py-4 pl-12 pr-4 outline-none focus:ring-2 focus:ring-blue-500 transition-all hero-heading"
-              />
-            </div>
-          </div>
+        <div className="relative z-10">
+          <AuthForm isLogin={isLogin} onSuccess={handleSuccess} />
+        </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium ml-1">Password</label>
-            <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 opacity-40" />
-              <input 
-                type="password" 
-                placeholder="••••••••"
-                className="w-full bg-slate-50 dark:bg-slate-800/50 border border-black/5 dark:border-white/5 rounded-2xl py-4 pl-12 pr-4 outline-none focus:ring-2 focus:ring-blue-500 transition-all hero-heading"
-              />
-            </div>
-          </div>
-
-          <button className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-blue-500/20 active:scale-[0.98]">
-            {isLogin ? "Sign In" : "Sign Up"}
-          </button>
-        </form>
-
-        <div className="relative my-8 text-center">
+        <div className="relative my-8 text-center relative z-10">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-black/5 dark:border-white/10"></div>
           </div>
-          <span className="relative px-4 glass-card text-xs font-medium opacity-50 uppercase tracking-widest">Or continue with</span>
+          <span className="relative px-4 bg-white dark:bg-[#1a1b1e] text-xs font-medium opacity-50 uppercase tracking-widest">Or continue with</span>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4 relative z-10">
           <button className="flex items-center justify-center gap-2 py-3 rounded-2xl border border-black/5 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
             <GoogleIcon />
             <span className="text-sm font-medium">Google</span>
@@ -94,7 +78,7 @@ export const AuthModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
           </button>
         </div>
 
-        <p className="text-center mt-8 text-sm opacity-50">
+        <p className="text-center mt-8 text-sm opacity-50 relative z-10 font-sans">
           {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
           <button 
             onClick={() => setIsLogin(!isLogin)}
@@ -107,3 +91,4 @@ export const AuthModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
     </div>
   );
 };
+

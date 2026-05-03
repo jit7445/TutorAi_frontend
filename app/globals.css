@@ -1,10 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
 @import "tailwindcss";
+
 
 @theme inline {
   --color-background: rgb(var(--background));
   --color-foreground: rgb(var(--foreground));
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: "DM Sans", sans-serif;
+  --font-display: "Playfair Display", serif;
+
   
   --color-brand-primary: #3b82f6;
   --color-brand-secondary: #8b5cf6;
@@ -35,10 +38,37 @@
   }
 }
 
+
+@keyframes rainbow-animate {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 300% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
 :root {
   --background: 255 255 255;
   --foreground: 2 6 23;
+  --gradient-shadow: linear-gradient(
+    45deg,
+    #fb0094,
+    #0000ff,
+    #00ff00,
+    #ffff00,
+    #ff0000,
+    #fb0094,
+    #0000ff,
+    #00ff00,
+    #ffff00,
+    #ff0000
+  );
 }
+
 
 .dark {
   --background: 2 6 23;
@@ -56,15 +86,17 @@ body {
 }
 
 .glass-card {
-  background-color: rgb(var(--background));
+  background-color: rgba(var(--background), 0.7);
   border: 1px solid rgba(var(--foreground), 0.1);
+  backdrop-filter: blur(16px);
 }
 
 .nav-container {
-  background-color: rgba(var(--background), 0.8);
-  border: 1px solid rgba(var(--foreground), 0.1);
-  backdrop-filter: blur(12px);
+  background-color: rgba(var(--background), 0.7);
+  border: 1px solid rgba(var(--foreground), 0.05);
+  backdrop-filter: blur(20px);
 }
+
 
 
 
