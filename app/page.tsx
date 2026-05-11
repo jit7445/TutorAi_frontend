@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef } from "react";
 import { motion, AnimatePresence, useScroll, useTransform, useSpring } from "framer-motion";
-import { Send, Sparkles, Video, FileText, PlayCircle, Download, Paperclip, X, Users, Zap, Globe, Star, Quote } from "lucide-react";
+import { Send, Sparkles, Video, FileText, PlayCircle, Download, Paperclip, X, Users, Zap, Globe, Star, Quote, Mic2, BrainCircuit, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Navbar } from "@/components/ui/navbar";
 import { BackgroundGradient } from "@/components/ui/background-gradient";
@@ -136,9 +136,9 @@ export default function Home() {
         </FadeUp>
 
         <FadeUp delay={0.1}>
-          <h1 className="font-display text-7xl md:text-9xl font-bold tracking-tighter leading-[0.9] text-white mb-8">
+          <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.1] text-white mb-6">
             Study Smarter, <br /> 
-            <span className="italic font-normal opacity-80">Not Harder</span>
+            <span className="italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Not Harder</span>
           </h1>
         </FadeUp>
 
@@ -150,12 +150,12 @@ export default function Home() {
         </FadeUp>
 
         <FadeUp delay={0.3}>
-          <div className="relative w-full max-w-4xl mx-auto group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
-            <div className="relative bg-black/40 backdrop-blur-2xl border border-white/10 rounded-3xl p-2 flex items-center">
+          <div className="relative w-full max-w-3xl mx-auto group">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500/30 to-purple-600/30 rounded-[2rem] blur opacity-50 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+            <div className="relative bg-[#111116] border border-white/10 rounded-[2rem] p-2 flex items-center shadow-2xl">
               <input type="file" ref={fileInputRef} onChange={handleFileUpload} className="hidden" />
-              <button onClick={() => fileInputRef.current?.click()} className="p-6 text-white/40 hover:text-white transition-colors">
-                <Paperclip className="w-8 h-8" />
+              <button onClick={() => fileInputRef.current?.click()} className="p-4 text-white/40 hover:text-white transition-colors">
+                <Paperclip className="w-6 h-6" />
               </button>
               <div className="flex-1 flex items-center px-4">
                 {attachedFile ? (
@@ -168,7 +168,7 @@ export default function Home() {
                   <input 
                     type="text" 
                     placeholder="What do you want to master today?" 
-                    className="w-full bg-transparent border-none focus:ring-0 py-8 px-2 text-2xl md:text-3xl outline-none text-white font-display placeholder:text-white/20"
+                    className="w-full bg-transparent border-none focus:ring-0 py-4 px-2 text-xl md:text-2xl outline-none text-white font-sans placeholder:text-white/30 placeholder:font-light"
                     value={topic}
                     onChange={(e) => setTopic(e.target.value)}
                   />
@@ -177,7 +177,7 @@ export default function Home() {
               <button 
                 onClick={handleGenerate}
                 disabled={isGenerating}
-                className="relative group/btn overflow-hidden bg-blue-600 px-8 py-4 rounded-full font-bold text-base md:text-lg text-white transition-all hover:scale-105 active:scale-95 disabled:opacity-50 shadow-[0_0_30px_rgba(37,99,235,0.4)] hover:shadow-[0_0_50px_rgba(37,99,235,0.6)]"
+                className="relative group/btn overflow-hidden bg-blue-600/90 hover:bg-blue-500 px-6 py-3 md:px-8 md:py-4 rounded-[1.5rem] font-bold text-sm md:text-base text-white transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 shadow-lg"
               >
                 {/* Button Shine Animation */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:animate-[shimmer_1.5s_infinite]" />
@@ -210,6 +210,18 @@ export default function Home() {
             </AnimatePresence>
           </div>
         </FadeUp>
+
+        {/* Trusted By Banner */}
+        <FadeUp delay={0.4}>
+          <div className="mt-16 w-full max-w-5xl mx-auto border-t border-white/5 pt-10">
+            <p className="text-sm font-medium text-white/40 tracking-widest uppercase mb-8">Trusted by students & teams at</p>
+            <div className="flex flex-wrap justify-center gap-10 md:gap-20 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+              {['Stanford', 'MIT', 'Harvard', 'Oxford', 'Google', 'Microsoft'].map((company) => (
+                <span key={company} className="font-display text-xl md:text-2xl font-bold text-white tracking-tight">{company}</span>
+              ))}
+            </div>
+          </div>
+        </FadeUp>
       </section>
 
       {/* Library Section */}
@@ -217,31 +229,70 @@ export default function Home() {
 
 
       {/* 2. Features Section */}
-      <section className="py-40 px-4 max-w-7xl mx-auto">
+      <section className="py-16 px-4 max-w-7xl mx-auto">
         <ScrollZoomWrapper>
           <FadeUp>
-            <div className="text-center mb-24">
-              <h2 className="font-display text-5xl md:text-7xl font-bold text-white mb-6">Powerful Tools</h2>
-              <p className="text-white/50 text-lg max-w-2xl mx-auto font-sans">
+            <div className="text-center mb-16">
+              <h2 className="font-display text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">Powerful Tools</h2>
+              <p className="text-zinc-400 text-lg max-w-2xl mx-auto font-sans">
                 Everything you need to master any subject in a fraction of the time.
               </p>
             </div>
           </FadeUp>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-6">
             {[
-              { icon: Video, title: "Video Gen", desc: "Cinema-quality educational videos with AI voiceovers.", color: "from-blue-500/20 to-cyan-500/20" },
-              { icon: FileText, title: "PDF Extraction", desc: "Upload PDFs for instant structured study notes.", color: "from-purple-500/20 to-pink-500/20" },
-              { icon: Sparkles, title: "AI Research", desc: "Global web scraping to build perfect study guides.", color: "from-emerald-500/20 to-teal-500/20" },
+              { icon: Video, title: "Video Gen", desc: "Cinema-quality educational videos with AI voiceovers.", color: "from-zinc-800 to-zinc-900" },
+              { icon: FileText, title: "PDF Extraction", desc: "Upload PDFs for instant structured study notes.", color: "from-zinc-800 to-zinc-900" },
+              { icon: Sparkles, title: "AI Research", desc: "Global web scraping to build perfect study guides.", color: "from-zinc-800 to-zinc-900" },
             ].map((f, i) => (
               <FadeUp key={i} delay={i * 0.1}>
-                <HoverCard className="bg-white/5 backdrop-blur-2xl border-white/10 h-full p-10">
-                  <div className={cn("w-16 h-16 rounded-2xl bg-gradient-to-br flex items-center justify-center mb-8 border border-white/10", f.color)}>
-                    <f.icon className="w-8 h-8 text-white" />
+                <div className="bg-[#111116] border border-white/5 rounded-[2rem] p-8 h-full hover:bg-[#16161c] transition-colors shadow-2xl relative overflow-hidden group">
+                  <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                  <div className="w-14 h-14 rounded-2xl bg-zinc-800/50 flex items-center justify-center mb-6 border border-white/5 group-hover:scale-110 transition-transform duration-300">
+                    <f.icon className="w-6 h-6 text-zinc-300" />
                   </div>
-                  <h3 className="font-display text-3xl font-bold text-white mb-4">{f.title}</h3>
-                  <p className="text-white/50 leading-relaxed font-sans">{f.desc}</p>
-                </HoverCard>
+                  <h3 className="font-display text-2xl font-bold text-white mb-3">{f.title}</h3>
+                  <p className="text-zinc-400 leading-relaxed font-sans text-sm">{f.desc}</p>
+                </div>
+              </FadeUp>
+            ))}
+          </div>
+        </ScrollZoomWrapper>
+      </section>
+
+      {/* Confident Pitch Section */}
+      <section className="py-16 px-4 max-w-7xl mx-auto relative overflow-hidden">
+        <ScrollZoomWrapper>
+          <FadeUp>
+            <div className="text-center mb-16">
+              <h2 className="font-display text-4xl md:text-5xl font-bold text-white leading-tight mb-4 tracking-tight">
+                Turn any document<br />
+                into a{' '}
+                <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
+                  confident pitch
+                </span>
+              </h2>
+              <p className="text-zinc-400 text-lg max-w-2xl mx-auto font-sans">
+                Upload your files. Get AI summaries, narration, and coaching feedback — all in one place.
+              </p>
+            </div>
+          </FadeUp>
+
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {[
+              { icon: Sparkles, title: "AI-Powered Summaries", desc: "Get page-by-page and full document summaries in seconds.", color: "from-indigo-500/20 to-blue-500/20" },
+              { icon: Mic2, title: "Text-to-Speech Narration", desc: "Convert any document into a natural audio presentation.", color: "from-purple-500/20 to-pink-500/20" },
+              { icon: BrainCircuit, title: "AI Presentation Coach", desc: "Practice your delivery and get scored feedback instantly.", color: "from-indigo-500/20 to-purple-500/20" },
+            ].map((f, i) => (
+              <FadeUp key={i} delay={i * 0.1}>
+                <div className="bg-[#0f0f2e]/60 backdrop-blur-2xl border border-indigo-500/20 h-full p-8 rounded-3xl hover:bg-[#0f0f2e]/80 transition-colors group">
+                  <div className={cn("w-14 h-14 rounded-2xl bg-gradient-to-br flex items-center justify-center mb-6 border border-white/5 group-hover:scale-110 transition-transform duration-300", f.color)}>
+                    <f.icon className="w-6 h-6 text-white" />
+                  </div>
+                  <h3 className="font-display text-xl font-bold text-white mb-3">{f.title}</h3>
+                  <p className="text-white/60 leading-relaxed font-sans text-sm">{f.desc}</p>
+                </div>
               </FadeUp>
             ))}
           </div>
@@ -249,9 +300,9 @@ export default function Home() {
       </section>
 
       {/* 3. Stats Section */}
-      <section className="py-40 px-4 max-w-7xl mx-auto">
+      <section className="py-16 px-4 max-w-7xl mx-auto">
         <ScrollZoomWrapper>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatCounter value="500K+" label="Active Students" />
             <StatCounter value="12M+" label="Notes Generated" />
             <StatCounter value="98%" label="Satisfaction" />
@@ -261,26 +312,26 @@ export default function Home() {
       </section>
 
       {/* 4. Testimonials */}
-      <section className="py-40 relative overflow-hidden">
+      <section className="py-16 relative overflow-hidden">
         <ScrollZoomWrapper>
           <FadeUp>
-            <div className="px-4 text-center mb-24">
-              <h2 className="font-display text-5xl md:text-7xl font-bold text-white mb-6">Student Stories</h2>
+            <div className="px-4 text-center mb-16">
+              <h2 className="font-display text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">Student Stories</h2>
             </div>
           </FadeUp>
           
-          <div className="flex gap-8 px-4 overflow-x-auto no-scrollbar pb-10 snap-x snap-mandatory">
+          <div className="flex gap-6 px-4 overflow-x-auto no-scrollbar pb-10 snap-x snap-mandatory">
             {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="min-w-[350px] md:min-w-[450px] p-8 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 snap-center">
-                <Quote className="w-10 h-10 text-white/20 mb-6" />
-                <p className="text-xl text-white/80 font-sans italic leading-relaxed mb-8">
+              <div key={i} className="min-w-[320px] md:min-w-[400px] p-8 rounded-[2rem] bg-[#111116] border border-white/5 snap-center relative">
+                <Quote className="w-8 h-8 text-white/10 mb-6" />
+                <p className="text-zinc-300 font-sans leading-relaxed mb-8 text-sm md:text-base">
                   "TutorAI literally saved my finals. I uploaded 500 pages of medical notes and got perfect summaries in minutes."
                 </p>
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-500" />
+                <div className="flex items-center gap-4 mt-auto">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500" />
                   <div>
-                    <div className="text-white font-bold font-display">Sarah Jenkins</div>
-                    <div className="text-white/40 text-sm uppercase tracking-widest font-sans">Medical Student</div>
+                    <div className="text-white font-bold font-sans text-sm">Sarah Jenkins</div>
+                    <div className="text-zinc-500 text-xs tracking-wider uppercase font-sans mt-0.5">Medical Student</div>
                   </div>
                 </div>
               </div>
@@ -289,11 +340,95 @@ export default function Home() {
         </ScrollZoomWrapper>
       </section>
 
+      {/* 5. Pricing Section */}
+      <section className="py-16 px-4 max-w-7xl mx-auto relative">
+        <ScrollZoomWrapper>
+          <FadeUp>
+            <div className="text-center mb-16">
+              <h2 className="font-display text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">Simple Pricing</h2>
+              <p className="text-zinc-400 text-lg max-w-2xl mx-auto font-sans">
+                Start for free, upgrade when you need more power.
+              </p>
+            </div>
+          </FadeUp>
 
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {/* Free Tier */}
+            <FadeUp delay={0.1}>
+              <div className="bg-[#111116] border border-white/5 rounded-[2rem] p-8 h-full flex flex-col hover:border-white/10 transition-colors">
+                <h3 className="text-xl font-bold text-white mb-2">Basic</h3>
+                <p className="text-zinc-500 text-sm mb-6">Perfect for trying out the platform.</p>
+                <div className="mb-8">
+                  <span className="text-4xl font-bold text-white">$0</span>
+                  <span className="text-zinc-500 text-sm">/mo</span>
+                </div>
+                <ul className="space-y-4 mb-8 flex-1">
+                  {['3 PDF Uploads per month', 'Basic AI Summaries', 'Community Support'].map((feature, i) => (
+                    <li key={i} className="flex items-start gap-3 text-zinc-300 text-sm">
+                      <Check className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+                <button className="w-full py-3 rounded-xl font-bold text-sm text-white bg-zinc-800 hover:bg-zinc-700 transition-colors">
+                  Get Started Free
+                </button>
+              </div>
+            </FadeUp>
 
+            {/* Pro Tier */}
+            <FadeUp delay={0.2}>
+              <div className="bg-gradient-to-b from-blue-900/20 to-transparent border border-blue-500/30 rounded-[2rem] p-8 h-full flex flex-col relative transform md:-translate-y-4 shadow-[0_0_30px_rgba(59,130,246,0.1)]">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                  Most Popular
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">Pro</h3>
+                <p className="text-blue-200/50 text-sm mb-6">For serious students & professionals.</p>
+                <div className="mb-8">
+                  <span className="text-4xl font-bold text-white">$15</span>
+                  <span className="text-zinc-500 text-sm">/mo</span>
+                </div>
+                <ul className="space-y-4 mb-8 flex-1">
+                  {['Unlimited PDF Uploads', 'Advanced AI Summaries & Narration', 'AI Presentation Coach', 'Priority Support'].map((feature, i) => (
+                    <li key={i} className="flex items-start gap-3 text-zinc-300 text-sm">
+                      <Check className="w-4 h-4 text-blue-400 mt-0.5 shrink-0" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+                <button className="w-full py-3 rounded-xl font-bold text-sm text-white bg-blue-600 hover:bg-blue-500 transition-colors">
+                  Upgrade to Pro
+                </button>
+              </div>
+            </FadeUp>
+
+            {/* Enterprise Tier */}
+            <FadeUp delay={0.3}>
+              <div className="bg-[#111116] border border-white/5 rounded-[2rem] p-8 h-full flex flex-col hover:border-white/10 transition-colors">
+                <h3 className="text-xl font-bold text-white mb-2">Teams</h3>
+                <p className="text-zinc-500 text-sm mb-6">Custom solutions for organizations.</p>
+                <div className="mb-8">
+                  <span className="text-4xl font-bold text-white">Custom</span>
+                </div>
+                <ul className="space-y-4 mb-8 flex-1">
+                  {['Everything in Pro', 'Custom API Access', 'Dedicated Account Manager', 'SSO & Advanced Security'].map((feature, i) => (
+                    <li key={i} className="flex items-start gap-3 text-zinc-300 text-sm">
+                      <Check className="w-4 h-4 text-indigo-400 mt-0.5 shrink-0" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+                <button className="w-full py-3 rounded-xl font-bold text-sm text-white bg-zinc-800 hover:bg-zinc-700 transition-colors">
+                  Contact Sales
+                </button>
+              </div>
+            </FadeUp>
+          </div>
+        </ScrollZoomWrapper>
+      </section>
 
       {/* 6. Footer */}
-      <footer className="py-20 px-4 border-t border-white/10">
+      <footer className="py-12 px-4 border-t border-white/10">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center">

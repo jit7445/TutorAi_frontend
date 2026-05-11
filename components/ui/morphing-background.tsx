@@ -20,14 +20,10 @@ export const MorphingBackground = ({ children }: { children?: React.ReactNode })
   // Background Gradient Morphing
   const backgroundGradient = useTransform(
     smoothProgress,
-    [0, 0.2, 0.4, 0.6, 0.8, 1],
+    [0, 1],
     [
-      "linear-gradient(135deg, #0a0a1a, #0d1b2a)", // Stage 1: Midnight
-      "linear-gradient(150deg, #020f12, #0a2a2a)", // Stage 2: Teal
-      "linear-gradient(165deg, #1a0a2e, #2d1b69)", // Stage 3: Violet
-      "linear-gradient(180deg, #2a0a1f, #4a1040)", // Stage 4: Magenta
-      "linear-gradient(195deg, #1a0800, #3d1a00)", // Stage 5: Amber
-      "linear-gradient(210deg, #001a0a, #002a15)", // Stage 6: Emerald
+      "linear-gradient(180deg, #050505 0%, #0a0a0c 100%)",
+      "linear-gradient(180deg, #0a0a0c 0%, #050505 100%)",
     ]
   );
 
@@ -50,18 +46,18 @@ export const MorphingBackground = ({ children }: { children?: React.ReactNode })
         {/* Grain/Noise Texture */}
         <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
         
-        {/* Floating Orbs / Blobs */}
+        {/* Subtle Glowing Orbs */}
         <motion.div
-          style={{ y: blobY, backgroundColor: blob1Color }}
-          className="absolute top-[10%] left-[15%] w-[40vw] h-[40vw] rounded-full blur-[120px] opacity-20 transition-colors duration-1000"
+          style={{ y: blobY }}
+          className="absolute top-[-10%] left-[20%] w-[50vw] h-[50vw] rounded-full blur-[150px] opacity-[0.07] bg-blue-500 transition-colors duration-1000"
         />
         <motion.div
-          style={{ y: useTransform(smoothProgress, [0, 1], [0, -400]), backgroundColor: blob2Color }}
-          className="absolute top-[40%] right-[10%] w-[35vw] h-[35vw] rounded-full blur-[130px] opacity-25 transition-colors duration-1000"
+          style={{ y: useTransform(smoothProgress, [0, 1], [0, -200]) }}
+          className="absolute top-[30%] right-[10%] w-[40vw] h-[40vw] rounded-full blur-[150px] opacity-[0.05] bg-purple-500 transition-colors duration-1000"
         />
         <motion.div
-          style={{ y: useTransform(smoothProgress, [0, 1], [0, 200]), backgroundColor: blob3Color }}
-          className="absolute bottom-[10%] left-[30%] w-[45vw] h-[45vw] rounded-full blur-[140px] opacity-15 transition-colors duration-1000"
+          style={{ y: useTransform(smoothProgress, [0, 1], [0, 100]) }}
+          className="absolute bottom-[-10%] left-[40%] w-[60vw] h-[60vw] rounded-full blur-[180px] opacity-[0.06] bg-indigo-500 transition-colors duration-1000"
         />
 
         {/* Mesh Shimmer Gradients */}

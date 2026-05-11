@@ -1,13 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 
 @theme inline {
   --color-background: rgb(var(--background));
   --color-foreground: rgb(var(--foreground));
-  --font-sans: "DM Sans", sans-serif;
-  --font-display: "Playfair Display", serif;
-
+  --font-sans: "Inter", "DM Sans", sans-serif;
+  --font-display: "Inter", "DM Sans", sans-serif;
   
   --color-brand-primary: #3b82f6;
   --color-brand-secondary: #8b5cf6;
@@ -71,7 +70,7 @@
 
 
 .dark {
-  --background: 2 6 23;
+  --background: 10 10 12;
   --foreground: 248 250 252;
 }
 
@@ -86,9 +85,10 @@ body {
 }
 
 .glass-card {
-  background-color: rgba(var(--background), 0.7);
-  border: 1px solid rgba(var(--foreground), 0.1);
-  backdrop-filter: blur(16px);
+  background-color: rgba(30, 30, 35, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(24px);
+  border-radius: 1.5rem;
 }
 
 .nav-container {

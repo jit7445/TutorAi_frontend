@@ -207,6 +207,8 @@ export const Library = () => {
                     </div>
                   </div>
                   
+                  <h4 className="text-2xl font-bold font-display text-white mb-4 line-clamp-2 leading-tight group-hover:text-blue-400 transition-colors">
+                    {group.topic}
                   </h4>
 
                   {/* PDF Thumbnail / Template Preview */}
